@@ -1,79 +1,52 @@
 #!/bin/bash
-
+set -euo pipefail
 
 INSTALL_DIR="$HOME/miniconda3"
 
-echo "Downloading Miniconda installer"
-curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-
-
-echo "Installing Miniconda to $INSTALL_DIR..."
-bash miniconda.sh -b -p "$INSTALL_DIR"
-
+echo "=== Checking Miniconda installation ==="
+if [ ! -d "$INSTALL_DIR" ]; then
+    echo "Downloading Miniconda installer..."
+    curl -fsSL -o miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash miniconda.sh -b -p "$INSTALL_DIR"
+    rm miniconda.sh
+fi
 
 export PATH="$INSTALL_DIR/bin:$PATH"
 
-echo "Initializing Conda..."
-conda init bash
-
-
-
-echo "Applying changes to current shell..."
-source ~/.bashrc
-
-echo "----Miniconda is installed and ready to use in this terminal."
-
-echo "Verifying installation..."
+echo "Verifying conda installation..."
 conda --version
 
-
-echo "Starting Git installation..."
-
-if command -v apt-get &> /dev/null; then
-    echo "Detected apt package manager. Updating package list..."
-    sudo apt-get update -y
-    echo "Installing Git..."
-    sudo apt-get install git -y
-else
-    echo "Error: Could not find a supported package manager (apt, dnf, yum)." >&2
-    exit 1
+echo "=== Checking Git installation ==="
+if ! command -v git &> /dev/null; then
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update -y && sudo apt-get install git -y
+    else
+        echo "No supported package manager found." >&2
+        exit 1
+    fi
 fi
+echo "Git installed: $(git --version)"
 
-if command -v git &> /dev/null; then
-    echo " Git has been successfully installed."
-    git --version
-else
-    echo " Git installation failed." >&2
-    exit 1
+# Activate conda base
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate base
+
+echo "=== Setting up API project ==="
+if [ ! -d "mlops-cs-1" ]; then
+    git clone https://github.com/Thameem022/mlops-cs-1.git
 fi
-
-
-# API BASED
-
-git init
-
-git clone https://github.com/Thameem022/mlops-cs-1.git
-
-cd ./mlops-cs-1
-
+cd mlops-cs-1
 pip install -r requirements.txt
-
-nohup your_command > my.log 2>&1 < /dev/null &
-
-echo "------API running------"
-
+nohup uvicorn main:app --host 0.0.0.0 --port 8000 > api.log 2>&1 < /dev/null &
 cd ..
 
-# local 
-
-git clone https://github.com/Thameem022/case-study-1-local.git
-
-cd ./case-study-1-local
-
+echo "=== Setting up Local project ==="
+if [ ! -d "case-study-1-local" ]; then
+    git clone https://github.com/Thameem022/case-study-1-local.git
+fi
+cd case-study-1-local
 pip install -r requirements.txt
+nohup python app.py > local.log 2>&1 < /dev/null &
+cd ..
 
-nohup your_command > my.log 2>&1 < /dev/null &
-
-echo "------local running------"
-
-echo "end of script"
+echo "=== API and Local are running in background"
