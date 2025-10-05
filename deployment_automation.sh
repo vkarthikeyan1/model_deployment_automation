@@ -73,7 +73,7 @@ fi
 # Run App
 APP_DIR="$HOME/mlops-cs-1"
 rm -rf "$APP_DIR"
-git clone https://github.com/Thameem022/mlops-cs-1.git "$APP_DIR"
+git clone https://github.com/Thameem022/mlops-cs-1.git
 
 cd "$APP_DIR"
 
