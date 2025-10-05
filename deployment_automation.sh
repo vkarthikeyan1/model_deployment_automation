@@ -1,7 +1,7 @@
 #!/bin/bash
-#export HF_TOKEN=${HF_TOKEN:?HF_TOKEN not set}
+export HF_TOKEN=${HF_TOKEN:?HF_TOKEN not set}
 
-#echo $HF_TOKEN
+echo $HF_TOKEN
 
 INSTALL_DIR="$HOME/miniconda3"
 
