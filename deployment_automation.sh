@@ -75,7 +75,7 @@ fi
 
 # Run App
 APP_DIR="$HOME/mlops-cs-1"
-rm -rf "$APP_DIR"  # Uncommented to ensure clean clone
+# rm -rf "$APP_DIR"  # Uncommented to ensure clean clone
 git clone https://github.com/Thameem022/mlops-cs-1.git "$APP_DIR"
 
 cd "$APP_DIR"
