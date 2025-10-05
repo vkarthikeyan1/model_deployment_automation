@@ -42,8 +42,7 @@ eval "
 $($INSTALL_DIR/bin/conda shell.bash hook)"
 
 echo "Creating a new environment: $ENV_NAME..."
-yes | conda create -y -n "$ENV_NAME" python=3.10
-
+yes "" | conda create -y -n "$ENV_NAME" python=3.10
 echo "Activating environment: $ENV_NAME..."
 conda activate "$ENV_NAME"
 
