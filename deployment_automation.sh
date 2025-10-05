@@ -36,7 +36,9 @@ if ! grep -q 'conda activate' ~/.bashrc; then
         echo "# <<< conda initialize <<<"
     } >> ~/.bashrc
 fi
-
+# Accept Anaconda channels' Terms of Service
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 # Activate conda in current shell
 eval "
 $($INSTALL_DIR/bin/conda shell.bash hook)"
@@ -72,7 +74,7 @@ fi
 
 # Run App
 APP_DIR="$HOME/mlops-cs-1"
-rm -rf "$APP_DIR"
+# rm -rf "$APP_DIR"
 git clone https://github.com/Thameem022/mlops-cs-1.git
 
 cd "$APP_DIR"
@@ -92,6 +94,6 @@ for i in {1..20}; do
     sleep 1
 done
 
-echo "❌ App failed to start on port 7860."
+echo "------- App failed to start on port 7860.-------"
 echo "Check logs with: tail -n 20 $APP_DIR/my.log"
 exit 1
