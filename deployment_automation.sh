@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-export HF_TOKEN=$1
+export HF_TOKEN=$(cat "$HOME/token.txt")
 
 INSTALL_DIR="$HOME/miniconda3"
 ENV_NAME="mlops_env_$(date +%s)"
@@ -25,16 +25,10 @@ fi
 echo "Verifying conda installation..."
 "$INSTALL_DIR/bin/conda" --version
 
-# Initialize Conda in bashrc (avoid duplication)
-if ! grep -q 'conda activate' ~/.bashrc; then
-    echo "Configuring ~/.bashrc for conda..."
-    {
-        echo ""
-        echo "# >>> conda initialize >>>"
-        echo "eval \"\\$($INSTALL_DIR/bin/conda shell.bash hook)\""
-        echo "# <<< conda initialize <<<"
-    } >> ~/.bashrc
-fi
+
+# Initialize Conda properly
+echo "Initializing conda in ~/.bashrc..."
+"$INSTALL_DIR/bin/conda" init bash
 
 # Activate conda in current shell FIRST
 eval "$($INSTALL_DIR/bin/conda shell.bash hook)"
