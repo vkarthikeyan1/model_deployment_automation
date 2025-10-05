@@ -11,7 +11,7 @@ curl -fsSL -o Miniconda3-latest-Linux-x86_64.sh https://repo.anaconda.com/minico
 
 echo "Installing Miniconda to $INSTALL_DIR..."
 rm -rf "$INSTALL_DIR"
-# Automatically accept license (twice handled)
+# Automatically accept license
 yes | bash Miniconda3-latest-Linux-x86_64.sh -b -p "$INSTALL_DIR"
 
 echo "=== Checking Miniconda installation ==="
@@ -25,7 +25,6 @@ fi
 echo "Verifying conda installation..."
 "$INSTALL_DIR/bin/conda" --version
 
-
 # Initialize Conda in bashrc (avoid duplication)
 if ! grep -q 'conda activate' ~/.bashrc; then
     echo "Configuring ~/.bashrc for conda..."
@@ -36,15 +35,18 @@ if ! grep -q 'conda activate' ~/.bashrc; then
         echo "# <<< conda initialize <<<"
     } >> ~/.bashrc
 fi
-# Accept Anaconda channels' Terms of Service
+
+# Activate conda in current shell FIRST
+eval "$($INSTALL_DIR/bin/conda shell.bash hook)"
+
+# NOW accept ToS (after conda is available)
+echo "Accepting Anaconda Terms of Service..."
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
 conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-# Activate conda in current shell
-eval "
-$($INSTALL_DIR/bin/conda shell.bash hook)"
 
 echo "Creating a new environment: $ENV_NAME..."
-yes "" | conda create -y -n "$ENV_NAME" python=3.10
+conda create -y -n "$ENV_NAME" python=3.10
+
 echo "Activating environment: $ENV_NAME..."
 conda activate "$ENV_NAME"
 
@@ -71,11 +73,10 @@ else
     exit 1
 fi
 
-
 # Run App
 APP_DIR="$HOME/mlops-cs-1"
-# rm -rf "$APP_DIR"
-git clone https://github.com/Thameem022/mlops-cs-1.git
+rm -rf "$APP_DIR"  # Uncommented to ensure clean clone
+git clone https://github.com/Thameem022/mlops-cs-1.git "$APP_DIR"
 
 cd "$APP_DIR"
 
