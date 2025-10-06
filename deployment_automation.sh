@@ -80,6 +80,6 @@ for i in {1..20}; do
     sleep 1
 done
 
-echo "------- App failed to start on port 7860.-------"
+echo "------- Status unsure, check the application-------"
 echo "Check logs with: tail -n 20 $APP_DIR/my.log"
 exit 1
